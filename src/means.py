@@ -19,6 +19,8 @@ def partition(data, c):
     return (means, clusters)
 
 def kmeans(means, clusters, k):
+    """Divide the elements into k clusters.
+    """
     data = clusters[0]
     for cluster in clusters[1:]:
         data = np.concatenate((data, cluster))

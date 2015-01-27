@@ -15,7 +15,7 @@ means2 = np.array([45, 22])
 cov2 = np.diag(np.array([100, 9]))
 
 
-def gendata(order=False):
+def gendata(save_order=False):
     """Gera os dados, salvado-os no data.txt. Caso order seja true, "order.txt"
     salva a posição original dos dados, antes de embaralhar.
     """
@@ -24,14 +24,14 @@ def gendata(order=False):
     data2 = gaussian(means2, cov2, 100)
     data = np.concatenate((data1_1, data1_2, data2))
 
-    if not order:
+    if not save_order:
         np.random.shuffle(data)
         return data
 
-    order = np.array(range(300))
+    order = np.array(range(300), dtype=np.intc)
     np.random.shuffle(order)
     shuffled_data = data[order]
-    np.savetxt('order.txt', order)
+    np.savetxt('order.txt', order, '%d')
     np.savetxt('data.txt', shuffled_data)
 
     return (shuffled_data, order)

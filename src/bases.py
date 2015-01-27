@@ -2,15 +2,15 @@ import numpy as np
 from numpy.random import multivariate_normal as gaussian
 
 
-#Classe 1, subclasse 1
+# Classe 1, subclasse 1
 means1_1 = np.array([60, 30])
 cov1_1 = np.diag(np.array([9, 144]))
 
-#Classe 1, subclasse 2
+# Classe 1, subclasse 2
 means1_2 = np.array([52, 30])
 cov1_2 = np.diag(np.array([9, 9]))
 
-#Classe 2
+# Classe 2
 means2 = np.array([45, 22])
 cov2 = np.diag(np.array([100, 9]))
 
@@ -36,6 +36,7 @@ def gendata(order=False):
 
     return (shuffled_data, order)
 
+
 def read(filename):
     f = open(filename)
     objs = list()
@@ -46,6 +47,7 @@ def read(filename):
 
     objs = np.array(objs)
     return objs
+
 
 def readdata(concat=True, shuffle=True):
     r11 = read('r11.txt')

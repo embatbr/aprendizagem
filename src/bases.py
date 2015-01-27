@@ -24,19 +24,50 @@ def gendata(shuffle=True):
     data = np.concatenate((data1_1, data1_2, data2))
 
     if shuffle:
-        return np.random.shuffle(data)
+        np.random.shuffle(data)
     return data
 
-def readdata():
-    file11 = open('r11.txt')
-    print(file11)
+def read(filename):
+    f = open(filename)
+    objs = list()
+    for line in f:
+        (x1, x2) = map(float, line[:-1].split())
+        obj = np.array([x1, x2])
+        objs.append(obj)
+
+    objs = np.array(objs)
+    return objs
+
+def readdata(concat=True, shuffle=True):
+    r11 = read('r11.txt')
+    r12 = read('r12.txt')
+    r2 = read('r2.txt')
+
+    if concat:
+        data = np.concatenate((r11, r12, r2))
+        if shuffle:
+            np.random.shuffle(data)
+        return data
+    return (r11, r12, r2)
 
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    data = gendata()
-
+    data = readdata()
     plt.grid(True)
-    plt.plot(data.T[0], data.T[1], linestyle=':', linewidth=2)
+    plt.plot(data.T[0], data.T[1], 'o ')
+
+    (r11, r12, r2) = readdata(False)
+    plt.figure()
+    plt.grid(True)
+    plt.plot(r11.T[0], r11.T[1], 'bo ')
+    plt.plot(r12.T[0], r12.T[1], 'bo ')
+    plt.plot(r2.T[0], r2.T[1], 'ro ')
+
+    data = gendata()
+    plt.figure()
+    plt.grid(True)
+    plt.plot(data.T[0], data.T[1], 'o ')
+
     plt.show()

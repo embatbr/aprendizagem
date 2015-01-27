@@ -1,4 +1,4 @@
-from bases import gendata
+from bases import gendata, readdata
 import numpy as np
 
 
@@ -52,7 +52,23 @@ def kmeans(means, clusters, k):
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    data = gendata()
+    (r11, r12, r2) = readdata(False)
+    mean11 = (np.mean(r11.T[0]), np.mean(r11.T[1]))
+    mean12 = (np.mean(r12.T[0]), np.mean(r12.T[1]))
+    mean2 = (np.mean(r2.T[0]), np.mean(r2.T[1]))
+
+    fig = plt.gcf()
+    fig.suptitle('Original')
+    plt.grid(True)
+    plt.plot(r11.T[0], r11.T[1], 'r. ')
+    plt.plot(r12.T[0], r12.T[1], 'g. ')
+    plt.plot(r2.T[0], r2.T[1], 'b. ')
+    plt.plot(mean11[0], mean11[1], 'ro ')
+    plt.plot(mean12[0], mean12[1], 'go ')
+    plt.plot(mean2[0], mean2[1], 'bo ')
+    plt.savefig('outputs/kmeans-original.png')
+
+    data = readdata()
     c = 3
     (means, clusters) = partition(data, c)
     for i in range(c):
@@ -60,10 +76,16 @@ if __name__ == '__main__':
         print('mean =', means[i])
         print('num eltos:', len(clusters[i]))
 
+    fig = plt.figure()
+    fig.suptitle('Random Partitions')
     plt.grid(True)
-    plt.plot(clusters[0].T[0], clusters[0].T[1], linestyle=':', linewidth=2)
-    plt.plot(clusters[1].T[0], clusters[1].T[1], linestyle=':', linewidth=2)
-    plt.plot(clusters[2].T[0], clusters[2].T[1], linestyle=':', linewidth=2)
+    plt.plot(clusters[0].T[0], clusters[0].T[1], 'r. ')
+    plt.plot(clusters[1].T[0], clusters[1].T[1], 'g. ')
+    plt.plot(clusters[2].T[0], clusters[2].T[1], 'b. ')
+    plt.plot(means[0][0], means[0][1], 'ro ')
+    plt.plot(means[1][0], means[1][1], 'go ')
+    plt.plot(means[2][0], means[2][1], 'bo ')
+    plt.savefig('outputs/kmeans-random-partitions.png')
 
     (means, clusters) = kmeans(means, clusters, c)
     print('\nkmeans')
@@ -72,10 +94,15 @@ if __name__ == '__main__':
         print('mean =', means[i])
         print('num eltos:', len(clusters[i]))
 
-    plt.figure()
+    fig = plt.figure()
+    fig.suptitle('Classified')
     plt.grid(True)
-    plt.plot(clusters[0].T[0], clusters[0].T[1], linestyle=':', linewidth=2)
-    plt.plot(clusters[1].T[0], clusters[1].T[1], linestyle=':', linewidth=2)
-    plt.plot(clusters[2].T[0], clusters[2].T[1], linestyle=':', linewidth=2)
+    plt.plot(clusters[0].T[0], clusters[0].T[1], 'r. ')
+    plt.plot(clusters[1].T[0], clusters[1].T[1], 'g. ')
+    plt.plot(clusters[2].T[0], clusters[2].T[1], 'b. ')
+    plt.plot(means[0][0], means[0][1], 'ro ')
+    plt.plot(means[1][0], means[1][1], 'go ')
+    plt.plot(means[2][0], means[2][1], 'bo ')
+    plt.savefig('outputs/kmeans-classified.png')
 
     plt.show()

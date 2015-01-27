@@ -116,5 +116,6 @@ def main(N=100, K=3, new_data=False):
             best_p = p
             best_lambdas = lambdas
     print("Prototipos: {}".format(best_p))
-    print("Indice de Rand: {}".format(best_p))
-    return data, order, best_u, best_p, rand_index3x3(u, order, K), best_lambdas
+    rand = rand_index3x3(u, order, K)
+    print("Indice de Rand: {}".format(rand))
+    return data, order, best_u, best_p, rand, best_lambdas

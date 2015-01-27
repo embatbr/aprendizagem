@@ -105,7 +105,7 @@ def main(N=100, K=3, new_data=False):
             data = np.loadtxt('data.txt')
             order = np.loadtxt('order.txt', np.intc)
         except FileNotFoundError:
-            data = gendata(save_order=True)
+            data, order = gendata(save_order=True)
     min_J = np.inf
     for i in range(N):
         print("Iteração {}:".format(i))

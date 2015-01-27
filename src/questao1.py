@@ -3,7 +3,7 @@ from operator import mul
 
 import numpy as np
 
-from generate_data import gen_data
+from bases import gendata
 
 
 def prod(iterable):
@@ -78,18 +78,16 @@ def algorithm(data, K):
     return J, u, prototypes, lambdas
 
 
-def rand_index(u, K, n=300):
+def rand_index3x3(u, order, K, n=300):
     table = np.zeros(K * K).reshape((K, K))
-    it = iter(u)
-    for k in range(K):  # K = 3
-        for i in range(100):
-            x = next(it)
-            x_is_in = max(zip(x, range(K)))[-1]
-            table[k][x_is_in] += 1
+    for i in range(300):
+        priori_class = order[i] // 100
+        cluster = max(zip(u[i], range(K)))[-1]
+        table[priori_class][cluster] += 1
 
     sum_n = sum(c2(x) for x in table.reshape(K**2))
     sum_a = sum(c2(sum(table[:, k])) for k in range(K))
-    sum_b = sum(3 * [c2(100)])
+    sum_b = 3 * c2(100)
     numerador = sum_n - sum_a * sum_b / c2(n)
     denominador = (sum_a + sum_b) / 2. - sum_a * sum_b / c2(n)
     return numerador / denominador
@@ -101,19 +99,22 @@ def hard_partitions(u, data, K):
 
 def main(N=100, K=3, new_data=False):
     if new_data:
-        data = gen_data()
+        data, order = gendata(save_order=True)
     else:
         try:
-            data = np.loadtxt('all_data')
+            data = np.loadtxt('data.txt')
+            order = np.loadtxt('order.txt', np.intc)
         except FileNotFoundError:
-            data = gen_data()
+            data = gendata(save_order=True)
     min_J = np.inf
     for i in range(N):
-        print("Iteração {}:", i)
+        print("Iteração {}:".format(i))
         j, u, p, lambdas = algorithm(data, K=K)
         if j < min_J:
             min_J = j
             best_u = u
             best_p = p
             best_lambdas = lambdas
-    return data, best_u, best_p, rand_index(u, K), best_lambdas
+    print("Prototipos: {}".format(best_p))
+    print("Indice de Rand: {}".format(best_p))
+    return data, order, best_u, best_p, rand_index3x3(u, order, K), best_lambdas

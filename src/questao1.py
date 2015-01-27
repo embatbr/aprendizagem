@@ -1,6 +1,7 @@
 from functools import reduce
 from operator import mul
 
+from matplotlib import pyplot as plt
 import numpy as np
 
 from bases import gendata
@@ -87,14 +88,42 @@ def rand_index3x3(u, order, K, n=300):
 
     sum_n = sum(c2(x) for x in table.reshape(K**2))
     sum_a = sum(c2(sum(table[:, k])) for k in range(K))
-    sum_b = 3 * c2(100)
+    sum_b = sum(c2(sum(table[k, :])) for k in range(K))
+    assert(sum_b == 3 * c2(100))
+    numerador = sum_n - sum_a * sum_b / c2(n)
+    denominador = (sum_a + sum_b) / 2. - sum_a * sum_b / c2(n)
+    return numerador / denominador
+
+
+def rand_index2x3(u, order, K, n=300):
+    table = np.zeros(2 * K).reshape((2, K))
+    for i in range(300):
+        priori_class = 0 if order[i] < 200 else 1
+        cluster = max(zip(u[i], range(K)))[-1]
+        table[priori_class][cluster] += 1
+
+    sum_n = sum(c2(x) for x in table.reshape(K * 2))
+    sum_a = sum(c2(sum(table[:, k])) for k in range(K))
+    sum_b = sum(c2(sum(table[k, :])) for k in range(2))
+    assert(sum_b == c2(200) + c2(100))
     numerador = sum_n - sum_a * sum_b / c2(n)
     denominador = (sum_a + sum_b) / 2. - sum_a * sum_b / c2(n)
     return numerador / denominador
 
 
 def hard_partitions(u, data, K):
-    pass
+    cluster_data = []
+    plt.clf()
+    for k in range(K):
+        cluster_data.append(
+            np.array([data[i] for i in range(300)
+                      if max(zip(u[i], range(K)))[-1] == k]))
+    plt.plot(cluster_data[0][:, 0], cluster_data[0][:, 1], 'r.')
+    plt.plot(cluster_data[1][:, 0], cluster_data[1][:, 1], 'g.')
+    plt.plot(cluster_data[2][:, 0], cluster_data[2][:, 1], 'b.')
+    plt.show()
+
+    return cluster_data
 
 
 def main(N=100, K=3, new_data=False):
@@ -116,6 +145,8 @@ def main(N=100, K=3, new_data=False):
             best_p = p
             best_lambdas = lambdas
     print("Prototipos: {}".format(best_p))
+    rand = rand_index2x3(u, order, K)
+    print("Indice de Rand(2x3): {}".format(rand))
     rand = rand_index3x3(u, order, K)
-    print("Indice de Rand: {}".format(rand))
-    return data, order, best_u, best_p, rand, best_lambdas
+    print("Indice de Rand(3x3): {}".format(rand))
+    return data, order, best_u, best_p, rand, best_lambdas, hard_partitions(best_u, data, K)

@@ -1,4 +1,4 @@
-from gendata import gendata
+from bases import gendata
 import numpy as np
 
 

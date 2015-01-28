@@ -1,6 +1,6 @@
 function [W,M,V,L] = EM_GM(X,k,ltol,maxiter,pflag,Init)
-% [W,M,V,L] = EM_GM(X,k,ltol,maxiter,pflag,Init) 
-% 
+% [W,M,V,L] = EM_GM(X,k,ltol,maxiter,pflag,Init)
+%
 % EM algorithm for k multidimensional Gaussian mixture estimation
 %
 % Inputs:
@@ -16,14 +16,6 @@ function [W,M,V,L] = EM_GM(X,k,ltol,maxiter,pflag,Init)
 %   M(d,k) - estimated mean vectors of GM
 %   V(d,d,k) - estimated covariance matrices of GM
 %   L - log likelihood of estimates
-%
-% Written by
-%   Patrick P. C. Tsui,
-%   PAMI research group
-%   Department of Electrical and Computer Engineering
-%   University of Waterloo, 
-%   March, 2006
-%
 
 %%%% Validate inputs %%%%
 if nargin <= 1,
@@ -38,27 +30,27 @@ elseif nargin == 3,
     maxiter = 1000; pflag = 0; Init = [];
     err_X = Verify_X(X);
     err_k = Verify_k(k);
-    [ltol,err_ltol] = Verify_ltol(ltol);    
+    [ltol,err_ltol] = Verify_ltol(ltol);
     if err_X | err_k | err_ltol, return; end
 elseif nargin == 4,
     pflag = 0;  Init = [];
     err_X = Verify_X(X);
     err_k = Verify_k(k);
-    [ltol,err_ltol] = Verify_ltol(ltol);    
+    [ltol,err_ltol] = Verify_ltol(ltol);
     [maxiter,err_maxiter] = Verify_maxiter(maxiter);
     if err_X | err_k | err_ltol | err_maxiter, return; end
 elseif nargin == 5,
      Init = [];
     err_X = Verify_X(X);
     err_k = Verify_k(k);
-    [ltol,err_ltol] = Verify_ltol(ltol);    
+    [ltol,err_ltol] = Verify_ltol(ltol);
     [maxiter,err_maxiter] = Verify_maxiter(maxiter);
     [pflag,err_pflag] = Verify_pflag(pflag);
     if err_X | err_k | err_ltol | err_maxiter | err_pflag, return; end
 elseif nargin == 6,
     err_X = Verify_X(X);
     err_k = Verify_k(k);
-    [ltol,err_ltol] = Verify_ltol(ltol);    
+    [ltol,err_ltol] = Verify_ltol(ltol);
     [maxiter,err_maxiter] = Verify_maxiter(maxiter);
     [pflag,err_pflag] = Verify_pflag(pflag);
     [Init,err_Init]=Verify_Init(Init);
@@ -70,8 +62,8 @@ end
 
 %%%% Initialize W, M, V,L %%%%
 t = cputime;
-if isempty(Init),  
-    [W,M,V] = Init_EM(X,k); L = 0;    
+if isempty(Init),
+    [W,M,V] = Init_EM(X,k); L = 0;
 else
     W = Init.W;
     M = Init.M;
@@ -83,12 +75,12 @@ Lo = 2*Ln;
 %%%% EM algorithm %%%%
 niter = 0;
 while (abs(100*(Ln-Lo)/Lo)>ltol) & (niter<=maxiter),
-    E = Expectation(X,k,W,M,V); % E-step    
+    E = Expectation(X,k,W,M,V); % E-step
     [W,M,V] = Maximization(X,k,E);  % M-step
     Lo = Ln;
     Ln = Likelihood(X,k,W,M,V);
     niter = niter + 1;
-end 
+end
 L = Ln;
 
 %%%% Plot 1D or 2D %%%%
@@ -100,7 +92,7 @@ if pflag==1,
         Plot_GM(X,k,W,M,V);
     end
     elapsed_time = sprintf('CPU time used for EM_GM: %5.2fs',cputime-t);
-    disp(elapsed_time); 
+    disp(elapsed_time);
     disp(sprintf('Number of iterations: %d',niter-1));
 end
 %%%%%%%%%%%%%%%%%%%%%%
@@ -115,10 +107,10 @@ iV = zeros(d,d,k);
 for j=1:k,
     if V(:,:,j)==zeros(d,d), V(:,:,j)=ones(d,d)*eps; end
     S(j) = sqrt(det(V(:,:,j)));
-    iV(:,:,j) = inv(V(:,:,j));    
+    iV(:,:,j) = inv(V(:,:,j));
 end
 E = zeros(n,k);
-for i=1:n,    
+for i=1:n,
     for j=1:k,
         dXM = X(i,:)'-M(:,j);
         pl = exp(-0.5*dXM'*iV(:,:,j)*dXM)/(a*S(j));

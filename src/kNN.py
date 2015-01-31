@@ -30,7 +30,23 @@ def prob_nKK(k, data, classes):
         P_w1_given_x.append(P_w1_given_xk)
         P_w2_given_x.append(P_w2_given_xk)
 
+    P_w1_given_x = np.array(P_w1_given_x)
+    P_w2_given_x = np.array(P_w2_given_x)
+
     return (P_w1_given_x, P_w2_given_x)
+
+def classify(data, classes, P1, P2):
+    """Classify a data set given the data, the classes and the conditional
+    probabilities (as a matrix with each class probability in a row).
+    """
+    c = P_w1_given_x - P_w2_given_x
+    c[c >= 0] = 1
+    c[c < 0] = 2
+    equal = (c == classes)
+    numequal = len(equal[equal == True])
+    hits = numequal / len(data)
+
+    return (c, hits)
 
 
 if __name__ == '__main__':
@@ -39,32 +55,32 @@ if __name__ == '__main__':
     data = readdata(shuffle=False)
     classes = np.ones(200, np.int8)
     classes = np.concatenate((classes, 2*np.ones(100, np.int8)))
+    hits = np.zeros(9)
 
     for k in range(1, 10):
         (P_w1_given_x ,P_w2_given_x) = prob_nKK(k, data, classes)
-
-        # saving to txt
-        f = open('files/kNN-k%d.txt' % k, 'w')
-        f.write('x[0] x[1] c P(w1|x) P(w2|x)\n')
-        for n in range(len(data)):
-            x = data[n]
-            c = classes[n]
-            P1 = P_w1_given_x[n]
-            P2 = P_w2_given_x[n]
-            f.write('%f %f %d %f %f\n' % (x[0], x[1], c, P1, P2))
+        (_, hits[k - 1]) = classify(data, classes, P_w1_given_x, P_w2_given_x)
 
         fig = plt.figure()
         fig.suptitle('P(w1|x)\nk-NN, k = %d' % k)
         plt.grid(True)
-        plt.plot(P_w1_given_x)
+        plt.fill_between(np.linspace(1, 300, 300), P_w1_given_x, color='blue')
         plt.ylim(-0.1,1.1)
         plt.savefig('outputs/kNN-k%d-P_w1_given_x.png' % k)
 
         fig = plt.figure()
         fig.suptitle('P(w2|x)\nk-NN, k = %d' % k)
         plt.grid(True)
-        plt.plot(P_w2_given_x, 'r')
+        plt.fill_between(np.linspace(1, 300, 300), P_w2_given_x, color='red')
         plt.ylim(-0.1,1.1)
         plt.savefig('outputs/kNN-k%d-P_w2_given_x.png' % k)
 
-        #plt.show()
+    fig = plt.figure()
+    fig.suptitle('Hits (blue) and Misses (red)')
+    plt.grid(True)
+    plt.xlabel('K')
+    plt.plot(np.linspace(1, 9, 9), hits, 'b')
+    plt.plot(np.linspace(1, 9, 9), 1 - hits, 'r')
+    plt.ylim(-0.1,1.1)
+    plt.savefig('outputs/kNN-hits-and-misses.png')
+    print('hits:', hits)

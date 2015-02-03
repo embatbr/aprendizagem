@@ -66,7 +66,7 @@ if __name__ == '__main__':
     plt.plot(mean11[0], mean11[1], 'ro ')
     plt.plot(mean12[0], mean12[1], 'go ')
     plt.plot(mean2[0], mean2[1], 'bo ')
-    plt.savefig('outputs/kmeans-original.png')
+    plt.savefig('outputs/kmeans/original.png')
 
     data = readdata()
     c = 3
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     plt.plot(means[0][0], means[0][1], 'ro ')
     plt.plot(means[1][0], means[1][1], 'go ')
     plt.plot(means[2][0], means[2][1], 'bo ')
-    plt.savefig('outputs/kmeans-random-partitions.png')
+    plt.savefig('outputs/kmeans/random-partitions.png')
 
     (means, clusters) = kmeans(means, clusters, c)
     print('\nkmeans')
@@ -103,6 +103,6 @@ if __name__ == '__main__':
     plt.plot(means[0][0], means[0][1], 'ro ')
     plt.plot(means[1][0], means[1][1], 'go ')
     plt.plot(means[2][0], means[2][1], 'bo ')
-    plt.savefig('outputs/kmeans-classified.png')
+    plt.savefig('outputs/kmeans/classified.png')
 
     plt.show()

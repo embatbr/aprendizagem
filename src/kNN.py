@@ -12,75 +12,71 @@ def kNN(x, k, data):
 
     return indices
 
-def prob_kNN(k, data, classes):
-    """Returns two arrays of conditional probabilities for classes 1 and 2, given
-    all 300 samples (so, each array has length 300). Receives the k (>= 1), the
-    set of samples and the class for each sample.
+def classify(train_data, test_data, train_classes, test_classes):
+    """Classifies a dataset given the training data and classes and the expected
+    classes.
     """
-    P_w1_given_x = list()
-    P_w2_given_x = list()
+    P1 = np.zeros(len(test_classes))
+    P2 = np.zeros(len(test_classes))
+    classified = np.zeros(len(test_classes))
+    i = 0
 
-    for x in data:
-        indices = kNN(x, k, data)
-        neighbours = data[indices]
-        neighbours_classes = classes[indices]
+    for x in test_data:
+        indices = kNN(x, k, train_data)
+        neighbours = train_data[indices]
+        neighbours_classes = train_classes[indices]
 
         k1 = len(neighbours_classes[neighbours_classes == 1])
-        P_w1_given_xk = k1/k
         k2 = len(neighbours_classes[neighbours_classes == 2])
-        P_w2_given_xk = k2/k
+        P1[i] = k1 / k
+        P2[i] = k2 / k
+        classified[i] = 2 if (k2 > k1) else 1
+        i = i + 1
 
-        P_w1_given_x.append(P_w1_given_xk)
-        P_w2_given_x.append(P_w2_given_xk)
-
-    P_w1_given_x = np.array(P_w1_given_x)
-    P_w2_given_x = np.array(P_w2_given_x)
-
-    return (P_w1_given_x, P_w2_given_x)
-
-def classify(data, classes, P_w1_given_x, P_w2_given_x):
-    """Classifies a data set given the data, the classes and the conditional
-    probabilities.
-    """
-    c = P_w1_given_x - P_w2_given_x
-    c[c >= 0] = 1
-    c[c < 0] = 2
-    equal = (c == classes)
+    equal = (classified == test_classes)
     numequal = len(equal[equal == True])
-    hits = numequal / len(data)
+    hits = numequal / len(test_classes)
 
-    return (c, hits)
+    return (hits, P1, P2, classified)
 
 
 if __name__ == '__main__':
     from bases import gendata, readdata
     import matplotlib.pyplot as plt
 
-    data = readdata(shuffle=False)
-    classes = np.ones(200, np.int8)
-    classes = np.concatenate((classes, 2*np.ones(100, np.int8)))
+    (data1_1, data1_2, data2) = readdata(False, False)
+    train_data = np.concatenate((data1_1[ : 75], data1_2[ : 75], data2[ : 75]))
+    train_classes = np.concatenate((np.ones(150, np.int8), 2*np.ones(75, np.int8)))
+    test_data = np.concatenate((data1_1[75 : ], data1_2[75 : ], data2[75 : ]))
+    test_classes = np.concatenate((np.ones(50, np.int8), 2*np.ones(25, np.int8)))
+
     num_ks = 9
     hits = np.zeros(num_ks)
+    P1 = np.zeros((num_ks, len(test_classes)))
+    P2 = np.zeros((num_ks, len(test_classes)))
+    classified = np.zeros((num_ks, len(test_classes)))
 
     for k in range(1, num_ks + 1):
-        (P_w1_given_x ,P_w2_given_x) = prob_kNN(k, data, classes)
-        (_, hits[k - 1]) = classify(data, classes, P_w1_given_x, P_w2_given_x)
+        (hits[k - 1], P1[k - 1], P2[k - 1], classified[k - 1]) = classify(train_data, test_data,
+                                                       train_classes, test_classes)
 
-        # plot P(w1|x)
         fig = plt.figure()
         fig.suptitle('P(w1|x)\nk-NN, k = %d' % k)
         plt.grid(True)
-        plt.fill_between(np.linspace(1, 300, 300), P_w1_given_x, color='blue')
-        plt.ylim(-0.1,1.1)
-        plt.savefig('outputs/kNN-k%d-P_w1_given_x.png' % k)
+        plt.fill_between(np.linspace(1, 75, 75), P1[k - 1], color='blue')
+        plt.plot(np.linspace(1, 75, 75), classified[k - 1], 'g.')
+        plt.xlim(1, 75)
+        plt.ylim(-0.1,2.1)
+        plt.savefig('outputs/kNN-k%d-P1.png' % k)
 
-        # plot P(w2|x)
         fig = plt.figure()
         fig.suptitle('P(w2|x)\nk-NN, k = %d' % k)
         plt.grid(True)
-        plt.fill_between(np.linspace(1, 300, 300), P_w2_given_x, color='red')
-        plt.ylim(-0.1,1.1)
-        plt.savefig('outputs/kNN-k%d-P_w2_given_x.png' % k)
+        plt.fill_between(np.linspace(1, 75, 75), P2[k - 1], color='red')
+        plt.plot(np.linspace(1, 75, 75), classified[k - 1], 'g.')
+        plt.xlim(1, 75)
+        plt.ylim(-0.1,2.1)
+        plt.savefig('outputs/kNN-k%d-P2.png' % k)
 
     # plot hits and misses
     fig = plt.figure()
@@ -92,3 +88,5 @@ if __name__ == '__main__':
     plt.ylim(-0.1,1.1)
     plt.savefig('outputs/kNN-hits-and-misses.png')
     print('hits:', hits)
+
+    plt.show()

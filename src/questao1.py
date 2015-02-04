@@ -4,7 +4,7 @@ from operator import mul
 from matplotlib import pyplot as plt
 import numpy as np
 
-from bases import gendata
+from bases import readdata
 
 
 def prod(iterable):
@@ -121,6 +121,7 @@ def hard_partitions(u, data, K):
     plt.plot(cluster_data[0][:, 0], cluster_data[0][:, 1], 'r.')
     plt.plot(cluster_data[1][:, 0], cluster_data[1][:, 1], 'g.')
     plt.plot(cluster_data[2][:, 0], cluster_data[2][:, 1], 'b.')
+    plt.savefig('outputs/fcm-dfcv/clusters.png')
     plt.show()
 
     return cluster_data
@@ -128,13 +129,13 @@ def hard_partitions(u, data, K):
 
 def main(N=100, K=3, new_data=False):
     if new_data:
-        data, order = gendata(save_order=True)
+        (data, order) = readdata(save_order=True)
     else:
         try:
             data = np.loadtxt('data.txt')
             order = np.loadtxt('order.txt', np.intc)
         except FileNotFoundError:
-            data, order = gendata(save_order=True)
+            (data, order) = readdata(save_order=True)
     min_J = np.inf
     for i in range(N):
         print("Iteração {}:".format(i))
@@ -149,4 +150,6 @@ def main(N=100, K=3, new_data=False):
     print("Indice de Rand(2x3): {}".format(rand))
     rand = rand_index3x3(u, order, K)
     print("Indice de Rand(3x3): {}".format(rand))
-    return data, order, best_u, best_p, rand, best_lambdas, hard_partitions(best_u, data, K)
+    return (data, order, best_u, best_p, rand, best_lambdas, hard_partitions(best_u, data, K))
+
+main()

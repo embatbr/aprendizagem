@@ -62,57 +62,50 @@ if __name__ == '__main__':
 
     # printing all features
     fig = plt.figure()
-    fig.suptitle('All features')
     plt.grid(True)
     plt.xlim(10, 80)
     plt.ylim(0, 70)
     plt.plot(data1_1.T[0], data1_1.T[1], 'r. ')
     plt.plot(data1_2.T[0], data1_2.T[1], 'g. ')
     plt.plot(data2.T[0], data2.T[1], 'b. ')
-    plt.savefig('outputs/kNN/features.png')
+    plt.savefig('outputs/kNN/features-all.png')
 
     # printing training
     fig = plt.figure()
-    fig.suptitle('Training')
     plt.grid(True)
     plt.xlim(10, 80)
     plt.ylim(0, 70)
     plt.plot(data1_1[ : 75].T[0], data1_1[ : 75].T[1], 'r. ')
     plt.plot(data1_2[ : 75].T[0], data1_2[ : 75].T[1], 'g. ')
     plt.plot(data2[ : 75].T[0], data2[ : 75].T[1], 'b. ')
-    plt.savefig('outputs/kNN/training.png')
+    plt.savefig('outputs/kNN/features-training.png')
 
     # printing training
     fig = plt.figure()
-    fig.suptitle('Test')
     plt.grid(True)
     plt.xlim(10, 80)
     plt.ylim(0, 70)
     plt.plot(data1_1[75 : ].T[0], data1_1[75 : ].T[1], 'r. ')
     plt.plot(data1_2[75 : ].T[0], data1_2[75 : ].T[1], 'g. ')
     plt.plot(data2[75 : ].T[0], data2[75 : ].T[1], 'b. ')
-    plt.savefig('outputs/kNN/test.png')
+    plt.savefig('outputs/kNN/features-test.png')
 
     for k in range(1, num_ks + 1):
         (hits[k - 1], P1[k - 1], P2[k - 1], classified[k - 1]) = classify(training_data, test_data,
                                                        training_classes, test_classes)
 
         fig = plt.figure()
-        fig.suptitle('P(w1|x)\nk-NN, k = %d' % k)
         plt.grid(True)
         plt.fill_between(np.linspace(1, 75, 75), P1[k - 1], color='blue')
-        plt.plot(np.linspace(1, 75, 75), classified[k - 1], 'g.')
         plt.xlim(1, 75)
-        plt.ylim(-0.1,2.1)
+        plt.ylim(-0.1,1.1)
         plt.savefig('outputs/kNN/k%d-P1.png' % k)
 
         fig = plt.figure()
-        fig.suptitle('P(w2|x)\nk-NN, k = %d' % k)
         plt.grid(True)
         plt.fill_between(np.linspace(1, 75, 75), P2[k - 1], color='red')
-        plt.plot(np.linspace(1, 75, 75), classified[k - 1], 'g.')
         plt.xlim(1, 75)
-        plt.ylim(-0.1,2.1)
+        plt.ylim(-0.1,1.1)
         plt.savefig('outputs/kNN/k%d-P2.png' % k)
 
     # plot hits and misses

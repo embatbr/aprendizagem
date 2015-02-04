@@ -9,6 +9,7 @@
 \usepackage[backend=bibtex,sorting=none,citestyle=numeric-comp]{biblatex}
 \usepackage{mathtools}
 \usepackage[section]{placeins}
+\usepackage{float}
 
 
 % PRE CONFIGURATIONS
@@ -24,7 +25,7 @@
 \renewcommand{\figurename}{\small Figure}
 \newcommand{\figureref}[1]{Fig. \ref{fig:#1}}
 \newcommand{\equationref}[1]{Eq. \ref{eq:#1}}
-\newcommand{\captiontext}[1]{\footnotesize{#1}}
+\newcommand{\captiontext}[1]{\small{#1}}
 \newcommand{\code}[1]{\texttt{#1}}
 
 
@@ -57,27 +58,27 @@
 
 O projeto consiste em gerar 300 amostras a partir de distribuições gaussianas
 bivariadas, formando 2 classes. A classe 1 é dividida nas subclasses 1-1 e 1-2,
-com 100 amostras cada, e a classe 2 também com 100 amostras. As funções geradoras
+com 100 amostras cada, e a classe 2 com 100 amostras também. As funções geradoras
 possuem os seguintes parâmetros:
 
-\begin{enumerate}
-    \item Classe 1-1: $\mu_1 = 60$, $\mu_2 = 30$, $\sigma_1^2 = 9$ e $\sigma_2^2 = 144$
-    \item Classe 1-2: $\mu_1 = 52$, $\mu_2 = 30$, $\sigma_1^2 = 9$ e $\sigma_2^2 = 9$
-    \item Classe 2: $\mu_1 = 45$, $\mu_2 = 22$, $\sigma_1^2 = 100$ e $\sigma_2^2 = 9$
-\end{enumerate}
+\begin{description}\itemsep0pt
+    \item[1-1:] $\mu_1 = 60$, $\mu_2 = 30$, $\sigma_1^2 = 9$ e $\sigma_2^2 = 144$
+    \item[1-2:] $\mu_1 = 52$, $\mu_2 = 30$, $\sigma_1^2 = 9$ e $\sigma_2^2 = 9$
+    \item[2:] $\mu_1 = 45$, $\mu_2 = 22$, $\sigma_1^2 = 100$ e $\sigma_2^2 = 9$
+\end{description}
 
-Os dados são gerados pelas funções \code{mvnrnd} de MATLAB e \code{multivariate\_normal}
-do pacote \code{random} de NumPy (biblioteca numérica para Python) e registrados
-em arquivos texto de acordo com a regra:
+Os dados podem ser gerados por uma das duas funções: \code{mvnrnd} do MATLAB ou
+\code{multivariate\_normal} do pacote \code{random} de NumPy (biblioteca numérica
+para Python). São registrados nos arquivos texto \emph{r11.txt}, \emph{r12.txt} e
+\emph{r2.txt}, com cada linha correspondendo a uma amostra, composta por dois números
+reais representando a primeira e a segunda variáveis, respectivamente.
 
-\begin{enumerate}\itemsep0pt
-    \item Classe 1-1: \emph{r11.txt}
-    \item Classe 1-2: \emph{r12.txt}
-    \item Classe 2: \emph{r2.txt}
-\end{enumerate}
-
-\noindent Cada linha corresponde a uma amostra, composta por dois números reais
-representando a primeira e a segunda variáveis.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{original_data}
+    \caption{\captiontext{Classes 1 (1-1 em vermelho e 1-2 em verde) e 2 (azul).}}
+    \label{fig:original_data}
+\end{figure}
 
 
 \chapter*{Questão 1}
@@ -91,24 +92,14 @@ Ocorreram poucas dificuldades, entre elas a falta de familiaridade com a bibliot
 NumPy e o entendimento do algoritmo em si. A implementação alcançou protótipos
 muito parecidos com a média das distribuições 1-1, 1-2 e 2, obtendo um índice de
 Rand entre 55\% e 70\% dependendo da distribuição. Em grande parte das vezes o
-algoritmo converge antes de 150 iterações. A seguir são mostrados os dados originais
-(\figureref{questao1_original}) e agrupados utilizando Fuzzy c-Means (FCM)
-(\figureref{questao1_clusters}).
+algoritmo converge antes de 150 iterações. Os dados descritos em \figureref{original_data}
+foram agrupados utilizando Fuzzy c-Means (FCM), como mostrado em \figureref{clusters}.
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.75]{questao1_original}
-    \caption{\captiontext{Originais. Classes 1 (1-1 em vermelho e 1-2 em verde) e 2 (azul).}}
-    \label{fig:questao1_original}
-\end{figure}
-
-\newpage
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[scale=0.75]{questao1_clusters}
-    \caption{\captiontext{FCM. Classes 1 (1-1 em azul e 1-2 em vermelho) e 2 (verde).}}
-    \label{fig:questao1_clusters}
+    \includegraphics[scale=0.5]{clusters}
+    \caption{\captiontext{Classes 1 (1-1 em vermelho e 1-2 em verde) e 2 (azul).}}
+    \label{fig:clusters}
 \end{figure}
 
 
@@ -126,22 +117,25 @@ P(\omega_2) = \frac{100}{300} = \frac{1}{3}
 \label{eq:prob_priori}
 \end{equation}
 
-
-\section*{Letra A}
+\section*{(A)}
 
 Para a gaussiana bivariada o método da Estimação da Máxima Verossimilhança
 (Maximum Likelihood Estimation, MLE) nos diz que a média e a matrix de covariância
 são dadas por
 
-\begin{equation}
-\mathbf{\mu} = \frac{1}{N} \sum_{k=1}^N \mathbf{x}_k
-\label{eq:letra_a_mean}
-\end{equation}
-
-\begin{equation}
-\mathbf{\Sigma} = \frac{1}{N} \sum_{k=1}^N (\mathbf{x}_k - \mathbf{\mu})(\mathbf{x}_k - \mathbf{\mu})'
-\label{eq:letra_a_covariance}
-\end{equation}
+\begin{minipage}[b]{0.45\linewidth}
+    \begin{equation}
+    \mathbf{\mu} = \frac{1}{N} \sum_{k=1}^N \mathbf{x}_k
+    \label{eq:letra_a_mean}
+    \end{equation}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\linewidth}
+    \begin{equation}
+    \mathbf{\Sigma} = \frac{1}{N} \sum_{k=1}^N (\mathbf{x}_k - \mathbf{\mu})(\mathbf{x}_k - \mathbf{\mu})'
+    \label{eq:letra_a_covariance}
+    \end{equation}
+\end{minipage}
 
 \noindent respectivamente, cuja implementação encontra-se em \code{segunda\_a.m}.
 A densidade de probabilidade para a classe 2 encontra-se em \figureref{pdf_mle_c2}.
@@ -150,107 +144,107 @@ matriz de covariância para cada gaussiana da mistura. A descrição do processo
 encontra-se no arquivo \code{EM\_GM.m}, com alguns resultados em \figureref{pdf_em_c11}
 e \figureref{pdf_em_c12}.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.75]{pdf_mle_c2}
+    \caption{\captiontext{Densidade de probabilidade}}
+    \label{fig:pdf_mle_c2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.45\linewidth}
+        \includegraphics[scale=0.7]{pdf_em_c11}
+        \caption{}
+        \label{fig:pdf_em_c11}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.45\linewidth}
+        \includegraphics[scale=0.7]{pdf_em_c12}
+        \caption{}
+        \label{fig:pdf_em_c12}
+    \end{minipage}
+\end{figure}
+
 Agora podemos calcular a densidade de probabilidade total da classe 1, ponderando
 os valores das subclasses (obtidos pelo EM) e misturando as gaussianas. O resultado
 é mostrado em \figureref{pdf_em_c1}.
 
-Por fim, $P(\omega_i|\mathbf{x}_k)$ é calculado a partir dos parâmetros já
-encontrados, exibida em \figureref{bayes_c1} e \figureref{bayes_c2}.
-
 \begin{figure}[ht]
     \centering
-    \includegraphics{pdf_mle_c2}
-    \caption{}
-    \label{fig:pdf_mle_c2}
-\end{figure}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics{pdf_em_c11}
-    \caption{}
-    \label{fig:pdf_em_c11}
-\end{figure}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics{pdf_em_c12}
-    \caption{}
-    \label{fig:pdf_em_c12}
-\end{figure}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics{pdf_em_c1}
+    \includegraphics[scale=0.7]{pdf_em_c1}
     \caption{}
     \label{fig:pdf_em_c1}
 \end{figure}
 
-\begin{figure}[ht]
+Por fim, $P(\omega_i|\mathbf{x}_k)$ é calculado a partir dos parâmetros já
+encontrados, exibida em \figureref{bayes_c1} e \figureref{bayes_c2}.
+
+\begin{figure}[H]
     \centering
-    \includegraphics{bayes_c1}
-    \caption{}
-    \label{fig:bayes_c1}
+    \begin{minipage}[b]{0.45\linewidth}
+        \includegraphics[scale=0.7]{bayes_c1}
+        \caption{\captiontext{Densidade de probabilidade por Bayes, classe 1.}}
+        \label{fig:bayes_c1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.45\linewidth}
+        \includegraphics[scale=0.7]{bayes_c2}
+        \caption{\captiontext{Densidade de probabilidade por Bayes, classe 2.}}
+        \label{fig:bayes_c2}
+    \end{minipage}
 \end{figure}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics{bayes_c2}
-    \caption{}
-    \label{fig:bayes_c2}
-\end{figure}
-
-
-\section*{Letra B}
+\section*{(B)}
 
 Utilizando a função de kernel bivariada, os códigos \code{parzen.m}, \code{bivar.m},
 \code{multi.m} e \code{uni.m} implementam a Janela de Parzen e definem as densidades
-de probabilidade variando o valor de h (figuras abaixo). A partir destes resultados
-é possível calcular $P(\omega_i|\mathbf{x}_k)$, esboçado em \figureref{parzen_c2_h06}.
+de probabilidade variando o valor de h. A partir destes resultados é possível
+calcular $P(\omega_i|\mathbf{x}_k)$, esboçado nas figuras abaixo.
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{parzen_c1_h10}
-    \caption{}
-    \label{fig:parzen_c1_h10}
+    \includegraphics[scale=0.35]{parzen-h1-pw1}
+    \caption{\captiontext{$P(\omega_1|\mathbf{x}_k)$ para k = 1.}}
+    \label{fig:parzen-h1-pw1}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{parzen_c2_h10}
-    \caption{}
-    \label{fig:parzen_c2_h10}
+    \includegraphics[scale=0.35]{parzen-h1-pw2}
+    \caption{\captiontext{$P(\omega_2|\mathbf{x}_k)$ para k = 1.}}
+    \label{fig:parzen-h1-pw2}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{parzen_c1_h3}
-    \caption{}
-    \label{fig:parzen_c1_h3}
+    \includegraphics[scale=0.35]{parzen-h05-pw1}
+    \caption{\captiontext{$P(\omega_1|\mathbf{x}_k)$ para k = 0.5.}}
+    \label{fig:parzen-h05-pw1}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{parzen_c2_h3}
-    \caption{}
-    \label{fig:parzen_c2_h3}
+    \includegraphics[scale=0.35]{parzen-h05-pw2}
+    \caption{\captiontext{$P(\omega_2|\mathbf{x}_k)$ para k = 0.5.}}
+    \label{fig:parzen-h05-pw2}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{parzen_c1_h06}
-    \caption{}
-    \label{fig:parzen_c1_h06}
+    \includegraphics[scale=0.35]{parzen-h03-pw1}
+    \caption{\captiontext{$P(\omega_1|\mathbf{x}_k)$ para k = 0.3.}}
+    \label{fig:parzen-h03-pw1}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{parzen_c2_h06}
-    \caption{}
-    \label{fig:parzen_c2_h06}
+    \includegraphics[scale=0.35]{parzen-h03-pw2}
+    \caption{\captiontext{$P(\omega_2|\mathbf{x}_k)$ para k = 0.3.}}
+    \label{fig:parzen-h03-pw2}
 \end{figure}
 
-
-\section*{Letra C}
+\section*{(C)}
 
 O código \code{kNN.py} implementa a probabilidade \emph{a posteriori} de $\omega_i$
 em relação a uma amostra $\mathbf{x}$. Como demonstrado em \autocite{duda.hart.stork.2000},
@@ -268,7 +262,7 @@ p_n(\mathbf{x}, \omega_i) = \frac{k_i / n}{V}
 \label{eq:dens_prob_conjunta}
 \end{equation}
 
-e
+\noindent e
 
 \begin{equation}
 \sum_{j=1}^c k_j = k
@@ -285,7 +279,7 @@ P_n(\omega_i|\mathbf{x}) = \frac{k_i}{k}
 A equação descrita acima apenas demonstra que $P_n(\omega_i|\mathbf{x})$ tende a
 $P(\omega_i|\mathbf{x})$ quando $k$ cresce. Logo, achando os $k$ vizinhos mais
 próximos ao ponto $\mathbf{x}$ temos o valor estimado de sua probabilidade
-\emph{a posteriori}. \figureref{kNN-k9-P_w1_given_x} e \figureref{kNN-k9-P_w2_given_x}
+\emph{a posteriori}. \figureref{k9-P1} e \figureref{k9-P2}
 mostram as estimações para $k = 9$. Note que o gráfico de $\omega_1$ é o inverso
 do de $\omega_2$. Isto ocorre porque
 
@@ -294,24 +288,23 @@ P_n(\omega_1|\mathbf{x}) + P_n(\omega_2|\mathbf{x}) = 1
 \label{eq:sum_prob_posteriori}
 \end{equation}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{kNN-k9-P_w1_given_x}
-    \caption{}
-    \label{fig:kNN-k9-P_w1_given_x}
+    \includegraphics[scale=0.5]{k9-P1}
+    \caption{\captiontext{P($\omega_1|\mathbf{x}$), para k = 9.}}
+    \label{fig:k9-P1}
 \end{figure}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[scale=0.5]{kNN-k9-P_w2_given_x}
-    \caption{}
-    \label{fig:kNN-k9-P_w2_given_x}
+    \includegraphics[scale=0.5]{k9-P2}
+    \caption{\captiontext{P($\omega_2|\mathbf{x}$), para k = 9.}}
+    \label{fig:k9-P2}
 \end{figure}
 
+\section*{(D)}
 
-\section*{Letra D}
-
-Utilizando um MLP treinado com backpropagation obtemos através de \code{MLP.m} um
+Utilizando um MLP treinado com backpropagation obtemos através de \code{mlp.py} um
 erro médio quadrático convergente após 300 épocas. O algoritmo permanece em execução
 até 10000 épocas (\figureref{mse_x_epochs}). Foram usadas 3 camadas escondidas e
 o resultado da classificação foi documentado em \emph{mlpout.txt}, onde a primeira
@@ -320,15 +313,14 @@ das matrizes r11, r12 e r2. A segunda coluna corresponde a saída da rede neural
 e a terceira, ao erro. Considerou-se que a classe 2 deve ter resposta ideal zero
 e a classe 1, deverá ter resposta 1.
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.75]{mse_x_epochs}
-    \caption{}
+    \includegraphics[scale=0.6]{mse_x_epochs}
+    \caption{\captiontext{Erro médio x Épocas.}}
     \label{fig:mse_x_epochs}
 \end{figure}
 
-
-\section*{Letra E}
+\section*{(E)}
 
 A regra da soma, implementada em \code{regra\_soma.m}, para uma determinada classe
 $\omega_j$ é dada por
@@ -338,12 +330,15 @@ $\omega_j$ é dada por
 \label{eq:sum_prob_posteriori}
 \end{equation}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=0.75]{sum_rule}
+    \includegraphics[scale=0.5]{sum_rule}
     \caption{}
     \label{fig:sum_rule}
 \end{figure}
+
+
+\chapter*{Questão 3}
 
 
 \printbibliography

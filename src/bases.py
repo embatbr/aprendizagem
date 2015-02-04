@@ -49,13 +49,22 @@ def read(filename):
     return objs
 
 
-def readdata(concat=True, shuffle=True):
-    r11 = read('r11.txt')
-    r12 = read('r12.txt')
-    r2 = read('r2.txt')
+def readdata(concat=True, shuffle=True, save_order=False):
+    r11 = read('files/input/r11.txt')
+    r12 = read('files/input/r12.txt')
+    r2 = read('files/input/r2.txt')
 
     if concat:
         data = np.concatenate((r11, r12, r2))
+
+        if save_order:
+            order = np.array(range(300), dtype=np.intc)
+            np.random.shuffle(order)
+            shuffled_data = data[order]
+            np.savetxt('order.txt', order, '%d')
+            np.savetxt('data.txt', shuffled_data)
+            return (shuffled_data, order)
+
         if shuffle:
             np.random.shuffle(data)
         return data
